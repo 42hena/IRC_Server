@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: alee <alee@student.42seoul.kr>             +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/08/17 07:01:17 by alee              #+#    #+#              #
-#    Updated: 2022/08/28 18:32:48 by alee             ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 CXX = c++
 CXX_VERSION = -std=c++11
 RM = rm -f
@@ -26,7 +14,7 @@ BONUS_FILE =
 all: $(NAME)
 
 $(NAME): $(OBJ_FILE)
-	$(CXX) $(CXX_VERSION) $^ -o $@
+	$(CXX) $(CXX_VERSION) $^ -o $@ 
 
 .PHONY: clean
 clean:
@@ -40,4 +28,3 @@ fclean: clean
 re:
 	make fclean
 	make all
-
