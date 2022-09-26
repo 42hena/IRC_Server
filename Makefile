@@ -11,8 +11,7 @@
 # **************************************************************************** #
 
 CXX = c++
-CXXFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
-CXX_VERSION = -std=c++98
+CXX_VERSION = -std=c++11
 RM = rm -f
 
 NAME = ircserv
@@ -27,7 +26,7 @@ BONUS_FILE =
 all: $(NAME)
 
 $(NAME): $(OBJ_FILE)
-	$(CXX) $(CXXFLAGS) $(CXX_VERSION) $^ -o $@
+	$(CXX) $(CXX_VERSION) $^ -o $@
 
 .PHONY: clean
 clean:
