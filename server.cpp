@@ -1,16 +1,7 @@
-#include "server.hpp"
-#include <arpa/inet.h>
-#include <cctype>
-#include <fcntl.h>
-#include <netinet/tcp.h>
-#include <unistd.h>
-#include <sys/select.h>
-#include <sys/time.h>
-#include <cstring>
-#include <sstream>
-#include <vector>
-
 #include <iostream>
+
+#include "server.hpp"
+
 
 Server::Server(int argc, char *argv[])
 	: irc_login_password(""), serv_port(6667), status(true)
@@ -23,14 +14,14 @@ Server::Server(int argc, char *argv[])
 	}
 	COUT << "now irc_login_password[" << irc_login_password << "]\n";
 #endif
-
-	// TODO:: 삭제
-	status = true;
-	serv_port = 6667;
-	(void)argc;
-	(void)argv;
 }
 
 Server::~Server(void)
 {
+}
+
+
+bool	Server::IsRunningState(void)
+{
+	return status;
 }

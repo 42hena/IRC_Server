@@ -22,6 +22,9 @@ public:
 	Server(int argc, char *argv[]);
 	~Server(void);
 
+	// 상태 체크
+	bool	IsRunningState(void);
+
 private:
 
 };
