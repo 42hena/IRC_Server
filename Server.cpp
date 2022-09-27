@@ -6,6 +6,8 @@
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
 
+#include "Command.hpp"
+
 #include "Server.hpp"
 #include "ParseUtil.hpp"
 
@@ -244,9 +246,91 @@ void	Server::PacketAnalysis(std::map<SOCKET, Client *>::iterator& iter)
 			param = "";
 		}
 		std::cout << "--requestCommand-- [command : " << command << ']' << ", " << "[param : " << param << ']' << '\n';
-		// requestCommand(iter, command, param);
+		requestCommand(iter, command, param);
 	}
 
+	return ;
+}
+
+void NickCommand(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING param)
+{
+	STRING msg = "";
+    COUT << "Nick Command\n";
+	COUT << "Command : [" << command << "], Param : [" << param << "]\n";
+
+	VECTOR<STRING> paramVector = split(param, ' ');
+	iter->second->setNickName(paramVector[0]);
+}
+
+void UserCommand(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING param)
+{
+    COUT << "User Command\n";
+	COUT << "Command : [" << command << "], Param : [" << param << "]\n";
+
+	VECTOR<STRING> paramVector = split(param, ' ');
+
+    for (unsigned int i = 0 ;i < paramVector.size() ; ++i)
+    {
+        COUT << paramVector[i] << '\n';
+    }
+
+	iter->second->setUserName(paramVector[0]);
+	iter->second->setHostName(paramVector[2]);
+    // real Nick
+
+
+    STRING user_info = iter->second->GetUserInfo();
+    if ((iter->second->GetJoinFlag() & 6) == 6)
+    {
+        // std::string	user_info = iter->second->GetUserInfo();
+        std::string tmp = ":irc.local 001 " + iter->second->GetUserInfo() + " :Welcome to the ft_irc Network";
+        tmp += CRLF;
+
+        send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
+        tmp = user_info + " 002 " + iter->second->GetNickName() + " :Your host is fortytwitch, running version 1.0\r\n";
+        send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
+        tmp = user_info + " 003 " + iter->second->GetNickName() + " :This server was created in August 30th\r\n";
+        send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
+        tmp = user_info + " 004 " + iter->second->GetNickName() + " :fortytwitch 1.0 o o]\r\n";
+        send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
+	     
+    }
+}
+
+// void JoinCommand(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING param)
+// {
+//     COUT << "Join Command\n";
+// 	COUT << "Command : [" << command << "], Param : [" << param << "]\n";
+
+// 	VECTOR<STRING> paramVector = split(param, ' ');
+
+//     for (unsigned int i = 0 ;i < paramVector.size() ; ++i)
+//     {
+//         COUT << paramVector[i] << '\n';
+//     }
+
+	
+// 	auto iter = channels.finc(param);
+
+// 	tmp = user_info + " 003 " + iter->second->GetNickName() + " :This server was created in August 30th\r\n";
+// 	send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
+// 	tmp = user_info + " 004 " + iter->second->GetNickName() + " :fortytwitch 1.0 o o]\r\n";
+// 	send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
+// }
+
+void	Server::requestCommand(std::map<SOCKET, Client*>::iterator &iter, \
+						std::string& command, std::string& param)
+{
+	// if (command == "PASS")
+	iter->second->GetRecvBuffer() = "";
+	if (command == "NICK")
+		NickCommand(iter, command, param);
+	else if (command == "USER")
+		UserCommand(iter, command, param);
+	// else if (command == "JOIN")
+	// 	JoinCommand(iter, command, param);
+	else
+		COUT << "NO\n";
 	return ;
 }
 

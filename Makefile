@@ -8,7 +8,9 @@ NAME = ircserv
 SRC_FILE	=	main.cpp \
 				Server.cpp \
 				Client.cpp \
-				ParseUtil.cpp
+				ParseUtil.cpp \
+				Command_user.cpp \
+				Command_nick.cpp
 				
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 BONUS_FILE =

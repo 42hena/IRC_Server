@@ -28,3 +28,44 @@ void   Client::SetDisconnect()
 {
     disconnect_flag = true;
 }
+
+STRING		Client::GetUserInfo()
+{
+	STRING info = ":" + GetNickName() +"!" +GetUserName() +"@"+GetHostName();
+	return info;
+}		
+
+STRING		Client::GetNickName()
+{
+	return nick_name;
+}
+
+STRING		Client::GetUserName()
+{
+	return user_name;
+}
+STRING		Client::GetHostName()
+{
+	return host_name;
+}
+
+unsigned char&		Client::GetJoinFlag()
+{
+	return join_flag;
+}
+
+void 				Client::setUserName(STRING &userName)
+{
+	user_name = userName;
+	join_flag |= (1 << USER_SETTING);
+}
+void 				Client::setHostName(STRING &hostName)
+{
+	host_name = hostName;
+}
+
+void 				Client::setNickName(STRING &nickName)
+{
+	nick_name = nickName;
+	join_flag |= (1 << NICK_SETTING);
+}

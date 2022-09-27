@@ -19,6 +19,18 @@ public:
 
 	void				SetDisconnect();
 	
+	// setting
+	void 				setNickName(STRING &);
+	void 				setUserName(STRING &);
+	void 				setHostName(STRING &);
+	
+
+	// getting
+	unsigned char&		GetJoinFlag();
+	STRING				GetUserInfo();
+	STRING				GetNickName();
+	STRING				GetUserName();
+	STRING				GetHostName();
 
 private:
     bool				disconnect_flag;
@@ -26,6 +38,9 @@ private:
 	STRING				recv_buf;
 	int					client_sock;
 	unsigned char 		join_flag;
+
+	STRING				nick_name;
+	STRING				user_name;
 	STRING				host_name;
 };
 

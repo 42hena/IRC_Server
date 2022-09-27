@@ -15,4 +15,12 @@
 #define BUFFER_MAX  1<<10
 #define SOCKET  long
 
+// flag
+#define PASS_SETTING 0
+#define NICK_SETTING 1
+#define USER_SETTING 2
+
+
+
+
 #endif
