@@ -1,23 +1,14 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: alee <alee@student.42seoul.kr>             +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/08/17 07:01:17 by alee              #+#    #+#              #
-#    Updated: 2022/08/28 18:32:48 by alee             ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 CXX = c++
+CXXFLAGS = -g -fsanitize=address
 CXX_VERSION = -std=c++11
 RM = rm -f
 
 NAME = ircserv
 
 SRC_FILE	=	main.cpp \
-				server.cpp \
+				Server.cpp \
+				Client.cpp \
+				ParseUtil.cpp
 				
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 BONUS_FILE =
@@ -26,7 +17,7 @@ BONUS_FILE =
 all: $(NAME)
 
 $(NAME): $(OBJ_FILE)
-	$(CXX) $(CXX_VERSION) $^ -o $@
+	$(CXX) $(CXXFLAGS) $(CXX_VERSION) $^ -o $@ 
 
 .PHONY: clean
 clean:
@@ -40,4 +31,3 @@ fclean: clean
 re:
 	make fclean
 	make all
-
