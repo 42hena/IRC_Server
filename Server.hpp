@@ -3,6 +3,7 @@
 
 # include "Define.hpp"
 # include <string>
+# include "Client.hpp"
 # include <netinet/in.h>
 
 class Server
@@ -16,9 +17,14 @@ public:
 	
 	// Run
 	void	Run();
+	void	networkProcess();
+	void	packetMarshalling();
+	void	clientDisconnect();
 
 	// 상태 체크
 	bool	IsRunningState(void);
+	
+	int		CalculateMaxFD(SOCKET sock);
 
 private:
 	//config value
@@ -32,6 +38,11 @@ private:
 	//server info
 	bool								status;
 	SOCKET								serv_listen_sock;
+
+	//client
+	fd_set								read_set;
+	fd_set								write_set;
+	MAP<SOCKET, Client *>				clients;
 };
 
 #endif
