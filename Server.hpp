@@ -17,15 +17,23 @@ public:
 	
 	// Run
 	void	Run();
-	void	networkProcess();
-	void	packetMarshalling();
-	void	clientDisconnect();
+	void	NetworkProcess();
+	void	PacketMarshalling();
+	void	ClientDisconnect();
 
 	// 상태 체크
 	bool	IsRunningState(void);
 	
 	int		CalculateMaxFD(SOCKET sock);
 
+
+	// test
+	void	sendPacket(MAP<SOCKET, Client *>::iterator &iter);
+	void	recvPacket(MAP<SOCKET, Client *>::iterator &iter);
+
+	
+	void	PacketAnalysis(std::map<SOCKET, Client *>::iterator& iter);
+	void	AcceptClient(SOCKET listen_sock);
 private:
 	//config value
 	STRING								irc_login_password;

@@ -1,11 +1,14 @@
 CXX = c++
+CXXFLAGS = -g -fsanitize=address
 CXX_VERSION = -std=c++11
 RM = rm -f
 
 NAME = ircserv
 
 SRC_FILE	=	main.cpp \
-				server.cpp \
+				Server.cpp \
+				Client.cpp \
+				ParseUtil.cpp
 				
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 BONUS_FILE =
@@ -14,7 +17,7 @@ BONUS_FILE =
 all: $(NAME)
 
 $(NAME): $(OBJ_FILE)
-	$(CXX) $(CXX_VERSION) $^ -o $@ 
+	$(CXX) $(CXXFLAGS) $(CXX_VERSION) $^ -o $@ 
 
 .PHONY: clean
 clean:
