@@ -34,6 +34,9 @@ public:
 	
 	void	PacketAnalysis(std::map<SOCKET, Client *>::iterator& iter);
 	void	AcceptClient(SOCKET listen_sock);
+
+
+	void	requestCommand(std::map<SOCKET, Client *>::iterator& iter, STRING &command, STRING &param);
 private:
 	//config value
 	STRING								irc_login_password;
