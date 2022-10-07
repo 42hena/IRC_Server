@@ -1,13 +1,17 @@
 #ifndef _CLIENT_HPP_
-#define _CLIENT_HPP_
+# define _CLIENT_HPP_
 
 #include "Define.hpp"
+
+class Channel;
 
 class Client
 {
 public:
 	Client(SOCKET s, std::string host_name);
 	~Client();
+
+	MAP<STRING, Channel *> * channel_ptr;
 
 	// disconnect flag
 	bool				IsDisconnected();

@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 #include <netinet/tcp.h>
 
+#include "Channel.hpp"
 #include "Command.hpp"
 
 #include "Server.hpp"
@@ -60,7 +61,6 @@ void	Server::NetworkInit()
 	}
 
 	// unset Nagle algorithm
-	//int optval = 1;
 	retval = setsockopt(serv_listen_sock, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
 	if (retval == -1)
 	{
@@ -269,11 +269,6 @@ void UserCommand(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING p
 
 	VECTOR<STRING> paramVector = split(param, ' ');
 
-    for (unsigned int i = 0 ;i < paramVector.size() ; ++i)
-    {
-        COUT << paramVector[i] << '\n';
-    }
-
 	iter->second->setUserName(paramVector[0]);
 	iter->second->setHostName(paramVector[2]);
     // real Nick
@@ -283,40 +278,24 @@ void UserCommand(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING p
     if ((iter->second->GetJoinFlag() & 6) == 6)
     {
         // std::string	user_info = iter->second->GetUserInfo();
-        std::string tmp = ":irc.local 001 " + iter->second->GetUserInfo() + " :Welcome to the ft_irc Network";
-        tmp += CRLF;
-
+		// STRING info = iter->second->GetNickName()+"!"+iter->second->GetUserName() +"@"+iter->second->GetHostName();
+		STRING info = iter->second->GetNickName();
+        STRING tmp = ":IrcServer 001 " + info + " :fuck\r\n";
+		COUT << tmp << '\n';
         send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
-        tmp = user_info + " 002 " + iter->second->GetNickName() + " :Your host is fortytwitch, running version 1.0\r\n";
+        tmp = ":IrcServer 002 " + info + " :Your host is fortytwitch, running version 1.0\r\n";
+		COUT << tmp << '\n';
         send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
-        tmp = user_info + " 003 " + iter->second->GetNickName() + " :This server was created in August 30th\r\n";
+        tmp = ":IrcServer 003 " + info + " :This server was created in August 30th\r\n";
+		COUT << tmp << '\n';
         send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
-        tmp = user_info + " 004 " + iter->second->GetNickName() + " :fortytwitch 1.0 o o]\r\n";
+        tmp = ":IrcServer 004 " + info + " :fortytwitch 1.0 o o]\r\n";
+		COUT << tmp << '\n';
         send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
-	     
     }
+	command = "";
+	param = "";
 }
-
-// void JoinCommand(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING param)
-// {
-//     COUT << "Join Command\n";
-// 	COUT << "Command : [" << command << "], Param : [" << param << "]\n";
-
-// 	VECTOR<STRING> paramVector = split(param, ' ');
-
-//     for (unsigned int i = 0 ;i < paramVector.size() ; ++i)
-//     {
-//         COUT << paramVector[i] << '\n';
-//     }
-
-	
-// 	auto iter = channels.finc(param);
-
-// 	tmp = user_info + " 003 " + iter->second->GetNickName() + " :This server was created in August 30th\r\n";
-// 	send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
-// 	tmp = user_info + " 004 " + iter->second->GetNickName() + " :fortytwitch 1.0 o o]\r\n";
-// 	send(iter->first, tmp.c_str(), tmp.length(), MSG_DONTWAIT);
-// }
 
 void	Server::requestCommand(std::map<SOCKET, Client*>::iterator &iter, \
 						std::string& command, std::string& param)
@@ -327,10 +306,14 @@ void	Server::requestCommand(std::map<SOCKET, Client*>::iterator &iter, \
 		NickCommand(iter, command, param);
 	else if (command == "USER")
 		UserCommand(iter, command, param);
-	// else if (command == "JOIN")
-	// 	JoinCommand(iter, command, param);
+	else if (command == "JOIN")
+		Join(iter, command, param);
+	else if (command == "PART")
+		Part(iter, command, param);
 	else
 		COUT << "NO\n";
+	command = "";
+	param = "";
 	return ;
 }
 
@@ -373,4 +356,115 @@ void	Server::AcceptClient(SOCKET listen_sock)
 	std::cout << "client ip     : " << inet_ntoa(c_addr_in.sin_addr) << std::endl;
 	std::cout << "-------------------" << std::endl;
 	return ;
+}
+
+// TEST
+
+void TEST(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING param)
+{
+	std::string host = ":IrcServer";
+	STRING info = iter->second->GetUserInfo();
+	std::string re1 = info + " " + command + " :" +param + "\r\n";
+	send(iter->first, re1.c_str(), re1.length(), MSG_DONTWAIT);
+	//TODO:: host
+	//topic이 있을 시에 전달하기.
+	std::string re2 = host + " 353 " + iter->second->GetNickName() + " = " + param + " :";
+
+	STRING name_list = "@" + iter->second->GetNickName();
+	re2 += name_list += "\r\n";
+	COUT << re2 << '\n';
+	send(iter->first, re2.c_str(), re2.length(), MSG_DONTWAIT);
+	
+
+	std::string re3 = host + " 366 " + iter->second->GetNickName() + " " + param + " :End of /NAMES list.\r\n";
+	
+	COUT << re3 << '\n';
+	send(iter->first, re3.c_str(), re3.length(), MSG_DONTWAIT);
+}
+
+void	Server::Join(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING param)
+{
+    VECTOR<STRING> server_vector = split(param, ',');
+
+	// ,으로 구분해주고 일일이 넣어줘야한다.
+	for (unsigned int i = 0 ; i < server_vector.size() ; ++i)
+	{
+		std::cout << "Channel Name: [" << server_vector[i] << "]\n";
+		MAP<STRING, Channel*>::iterator chan_iter = channels.find(server_vector[i]);
+		
+		// 이름이 존제x
+		if (chan_iter == channels.end())
+		{
+			std::cout << "make channel\n";
+			Channel* new_chann = new Channel(server_vector[i]);
+			channels.insert(std::make_pair(server_vector[i], new_chann));
+
+			// new_chann->assignOper(iter->second->GetNickName(), iter->second);
+			new_chann->assignUser(iter->second->GetNickName(), iter->second);
+		}
+		// 찾았을 경우
+		else
+		{
+			std::cout << "already channel exist\n";
+			Channel* channel_info = chan_iter->second;
+			// if (!channel_info->getUsers_().size())
+			// 	channel_info->assignOper(iter->second->GetNickName(), iter->second);
+			channel_info->assignUser(iter->second->GetNickName(), iter->second);
+		}
+
+		// 들어갔다라는 메세지 주기
+		TEST(iter, command, server_vector[i]);
+	}
+	(void)command;
+}
+
+
+void	Server::requestPartMsg(MAP<SOCKET, Client*>::iterator &iter, \
+						STRING& command, std::string& param)
+{
+    // nick!user@host
+    STRING msg = "";
+    for (std::map<SOCKET, Client*>::iterator c_iter = clients.begin(); c_iter != clients.end(); c_iter++)
+    {
+        msg = iter->second->GetUserInfo()+ " "
+            + command + " :" + param + "\r\n"; 
+        std::cout << msg << '\n';
+		send(iter->first, msg.c_str(), msg.length(), MSG_DONTWAIT);
+        // insertSendBuffer(c_iter->second, msg);
+    }
+}
+
+
+void Server::Part(MAP<SOCKET, Client*>::iterator &iter, STRING &command, STRING param)
+{
+    // #체널 + 메세지 올 경우    
+    VECTOR<STRING> splitted_param = split(param, ' ');
+
+    STRING channel_name = splitted_param[0];
+    MAP<STRING, Channel *>::iterator channel_iter = channels.find(channel_name);
+
+    // 없다면 part할 필요가 없음
+    if (channel_iter == channels.end())
+        return ;
+    
+    // 나갈 친구의 nick
+    STRING partNick = iter->second->GetNickName();
+
+    std::cout << "PART TEST START\n";
+    std::cout << "param :  [" << channel_name << "]\n";
+    std::cout << "partSocket :  [" << partNick << "]\n";
+
+    MAP<STRING, Client*> client_map = channel_iter->second->getUsers_();
+    MAP<STRING, Client*>::iterator client_iter = client_map.find(partNick);
+    // 내가 찾는 친구가 없네? 그럼 끝
+    if (client_iter == client_map.end())
+        return ;
+    
+	// 나가기
+    channel_iter->second->eraseUser(partNick);
+    // channel_iter->second->eraseOper(partNick);
+
+    // 명령어 요청
+    requestPartMsg(iter , command, param);
+    // todo: part leaving message
 }

@@ -10,7 +10,9 @@ SRC_FILE	=	main.cpp \
 				Client.cpp \
 				ParseUtil.cpp \
 				Command_user.cpp \
-				Command_nick.cpp
+				Command_nick.cpp \
+				Command_join.cpp \
+				Channel.cpp
 				
 OBJ_FILE = $(SRC_FILE:.cpp=.o)
 BONUS_FILE =
