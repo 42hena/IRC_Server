@@ -20,7 +20,4 @@
 #define NICK_SETTING 1
 #define USER_SETTING 2
 
-
-
-
 #endif

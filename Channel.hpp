@@ -8,8 +8,8 @@ class Client;
 class Channel
 {
 private:
-	MAP<STRING , Client*>	users_;
-	MAP<STRING , Client*>	opers_;
+	MAP<STRING, Client*>	users_;
+	MAP<STRING, Client*>	opers_;
 
 	STRING				topic_;
 	STRING				name_; // tmp... considering to remove
@@ -18,10 +18,9 @@ public:
 	Channel(std::string name); // todo: use reference?
 	Channel(void);
 	~Channel(void);
-	// todo: OCCF
 
-	void	assignUser(STRING , Client* new_user);
-	void	assignOper(STRING , Client* user);
+	void	assignUser(STRING, Client*);
+	void	assignOper(STRING, Client*);
 
 	bool	isUserAlreadyIn(STRING);
 
