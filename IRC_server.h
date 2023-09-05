@@ -4,21 +4,22 @@
 class IRC_server
 {
 public:
-    IRC_server(int argc, char *argv[]);
-    ~IRC_server();
+	IRC_server(int argc, char *argv[]);
+	~IRC_server();
+
+	bool isRunStatus();
 
 private:
-    IRC_server(/* args */);
+	IRC_server();
 
-
-    // --------------------
-    std::string  password;
-    int     port;
-    int     sock_cnt;
+	bool IsArgcValid(int argc);
+	bool IsArgvValid(char* argv[]);
+	void ChangeServerDown();
+	bool IsPortValid(int ret_atoi);
+	
+	bool				status;
+	unsigned short		port;
+	std::string			password;
 };
-
-
-
-
 
 #endif
