@@ -2,7 +2,6 @@
 #include <string> //string
 #include <cstdlib> // atoi
 
-
 #include "IRC_server.h"
 
 // IRC_server's Constructor
@@ -27,13 +26,24 @@ IRC_server::IRC_server(int argc, char *argv[])
 		return ;
 	}
 
+	// Init Server Port
+	SetServPort(atoi(argv[1]));
+
+	// Init Server Password
+	SetServPassword(argv[2]);
+
+#ifdef DEBUG
+	std::cout << GetServPort() << ' ' << GetServPassword() << '\n';
 	std::cout << "Pass argc, argv ^.^\n";
+#endif
+
+	std::cout << "IRC_server's constructor\n";
 }
 
 // IRC_server's Destructor
 IRC_server::~IRC_server()
 {
-	std::cout << "Server Down T.T\n";
+	std::cout << "IRC_server's Destructor\n";
 }
 
 // --------------------
@@ -51,6 +61,7 @@ bool IRC_server::IsArgcValid(int argc)
 bool IRC_server::IsArgvValid(char* argv[])
 {
 	int inputPort;
+	int inputPasswordSize;
 // -----
 
 	// convert port [char* -> int]
@@ -63,27 +74,23 @@ bool IRC_server::IsArgvValid(char* argv[])
 		return (false);
 	}
 
-	// conver port [int -> unsigned short]
-	port = inputPort;
-
-	// convert password [char* -> string]
-	password = argv[2];
+	// Get password's size
+	inputPasswordSize = strlen(argv[2]);
 
 	// check password size
-	if (password.size() > 20)
+	if (inputPasswordSize > 20)
 	{
 		std::cout << "비밀번호가 20글자를 초과합니다.\n";
 		return (false);
 	}
 
-#ifdef C_DEBUG
-	std::cout << "input port: [" << inputPort << "] convert port:[" << port <<"]\n";
-	std::cout << "password size: [" << password.size() << "] password: [" << password <<"]\n";
+#ifdef P_DEBUG
+	std::cout << "input port: [" << inputPort << "]\n";
+	std::cout << "password size: [" << inputPasswordSize << "] password: [" << argv[2] <<"]\n";
 #endif
 
 	return (true);
 }
-
 
 // check port
 bool IRC_server::IsPortValid(int convertPort)
@@ -93,7 +100,7 @@ bool IRC_server::IsPortValid(int convertPort)
 	// port range(0 ~ 65535) but 
 	if (convertPort > 0 && convertPort < 65536)
 	{
-	#ifdef C_DEBUG
+	#ifdef P_DEBUG
 		if (convertPort < 1024)
 			std::cout << "Well known port\n";
 		else if (convertPort < 49152)
@@ -120,3 +127,33 @@ bool IRC_server::isRunStatus()
 // -----
 	return (status);
 }// TODO: bool 자료형이 아닌 enum으로 바꿔봅시다.
+
+// Get Server Port
+unsigned short IRC_server::GetServPort()
+{
+//-----
+	return port;
+}
+
+// Update Server
+void IRC_server::SetServPort(int inputPort)
+{
+//-----
+
+	// conver port [int -> unsigned short]
+	port = inputPort;
+}
+
+std::string IRC_server::GetServPassword()
+{
+//-----
+	return password;
+}
+
+void IRC_server::SetServPassword(char* inputPassword)
+{
+//-----
+
+	// convert password [char* -> string]
+	password = inputPassword;
+}
