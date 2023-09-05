@@ -1,9 +1,9 @@
-#include "Server.hpp"
+#include <string>
+#include "IRC_server.h"
 
 int	main(int argc, char *argv[])
 {
-	Server	irc_server(argc, argv);
+	IRC_server	irc_server(argc, argv);
 
-    while (irc_server.IsRunningState())
-        irc_server.Run();
+    
 }
